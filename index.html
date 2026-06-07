@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZortChat</title>
+    <title>ZortChat Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
@@ -13,6 +13,8 @@
             background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
             background-repeat: repeat;
         }
+        /* Gizli dosya inputu için */
+        #file-input { display: none; }
     </style>
 </head>
 <body class="wa-bg text-[#e9edef] font-sans flex flex-col justify-between">
@@ -21,19 +23,19 @@
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center font-bold text-white text-lg shadow-sm">Z</div>
             <div>
-                <h1 class="text-md font-medium text-[#e9edef] leading-tight">ZortChat</h1>
+                <h1 class="text-md font-medium text-[#e9edef] leading-tight">ZortChat Pro</h1>
                 <p id="status" class="text-xs text-[#8696a0]">Bağlantı bekleniyor...</p>
             </div>
         </div>
-        <div class="bg-[#111b21] px-3 py-1 rounded-full border border-[#222e35] text-center flex flex-col justify-center">
-            <span class="text-[9px] text-[#8696a0] block uppercase tracking-wider font-semibold">ID'niz</span>
+        <div class="bg-[#111b21] px-3 py-1 rounded-full border border-[#222e35] text-center">
+            <span class="text-[9px] text-[#8696a0] block uppercase tracking-wider font-semibold">Sabit ID'niz</span>
             <span id="my-id" class="text-xs font-bold text-[#00a884] font-mono select-all">Üretiliyor...</span>
         </div>
     </header>
 
     <section id="control-zone" class="bg-[#111b21] p-3 border-b border-[#222e35] space-y-2 shrink-0">
-        <div class="flex gap-2" id="connect-container">
-            <input id="peer-id-input" type="text" placeholder="Bağlanılacak ID'yi girin (Örn: Zort-1234)" 
+        <div class="flex gap-2">
+            <input id="peer-id-input" type="text" placeholder="Bağlanılacak arkadaş ID'si" 
                    class="flex-1 bg-[#2a3942] border-none rounded-lg px-3 py-2 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none focus:ring-1 focus:ring-[#00a884]">
             <button onclick="connectToPeer()" class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] font-bold text-xs px-4 py-2 rounded-lg transition-all">
                 Bağlan
@@ -41,30 +43,35 @@
         </div>
 
         <div class="pt-1 border-t border-[#222e35]/50 flex flex-col gap-1.5">
-            <button id="toggle-custom-btn" onclick="toggleCustomIdInput()" class="text-left text-[11px] text-[#8696a0] hover:text-[#00a884] transition-colors w-max">
-                ⚙️ Kendi ID'mi Özelleştir
+            <button onclick="toggleCustomIdInput()" class="text-left text-[11px] text-[#8696a0] hover:text-[#00a884] transition-colors w-max">
+                ⚙️ Kimliğimi Değiştir (Kalıcı Olur)
             </button>
             <div id="custom-id-container" class="flex gap-2 hidden">
-                <input id="custom-id-input" type="text" placeholder="Yeni ID yazın (Örn: ahmet-zort)" 
+                <input id="custom-id-input" type="text" placeholder="Kalıcı ortak ID'niz" 
                        class="flex-1 bg-[#2a3942] border-none rounded-lg px-3 py-1.5 text-xs text-[#e9edef] placeholder-[#8696a0] focus:outline-none">
                 <button onclick="changeMyId()" class="bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold text-[11px] px-3 py-1.5 rounded-lg transition-all">
-                    ID Güncelle
+                    Kaydet
                 </button>
             </div>
         </div>
     </section>
 
     <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col bg-opacity-20 bg-black">
-        <div class="self-center bg-[#182229] text-[#8696a0] text-xs px-3 py-1.5 rounded-md shadow-sm my-2 border border-[#222e35] text-center max-w-xs">
-            💬 Otomatik üretilen ID'nizi paylaşın veya alt ayarlardan kendinize özel bir ID belirleyin.
-        </div>
-    </main>
+        </main>
 
     <footer class="bg-[#202c33] p-3 border-t border-[#222e35] h-[65px] shrink-0 flex items-center gap-2">
+        <label for="file-input" class="cursor-pointer text-[#8696a0] hover:text-[#00a884] p-1 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+            </svg>
+        </label>
+        <input type="file" id="file-input" accept="image/*" onchange="sendPhoto(this)">
+
         <input id="message-input" type="text" placeholder="Bir mesaj yazın..." onkeypress="handleKeyPress(event)"
                class="flex-1 bg-[#2a3942] border-none rounded-lg px-4 py-2.5 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none">
-        <button onclick="sendMessage()" 
-                class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] p-2.5 rounded-full flex items-center justify-center shrink-0">
+        
+        <button onclick="sendMessage()" class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] p-2.5 rounded-full flex items-center justify-center shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 transform rotate-45 mr-0.5">
                 <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.53 60.53 0 0 0 18.14-11.752.75.75 0 0 0 0-1.148 60.53 60.53 0 0 0-18.14-11.752Z" />
             </svg>
@@ -74,6 +81,7 @@
     <script>
         let peer = null;
         let conn = null;
+        let messageHistory = JSON.parse(localStorage.getItem('zort_history')) || [];
 
         const myIdDisplay = document.getElementById('my-id');
         const peerIdInput = document.getElementById('peer-id-input');
@@ -83,22 +91,25 @@
         const chatBox = document.getElementById('chat-box');
         const statusDisplay = document.getElementById('status');
 
-        // 1. Rastgele ID Üretme Fonksiyonu
-        function generateRandomId() {
-            return `Zort-${Math.floor(1000 + Math.random() * 9000)}`;
+        // 1. Kimlik Yönetimi (Hafızadan yükleme veya otomatik atama)
+        function getSavedOrRandomId() {
+            let savedId = localStorage.getItem('zort_my_id');
+            if (!savedId) {
+                savedId = `Zort-${Math.floor(1000 + Math.random() * 9000)}`;
+                localStorage.setItem('zort_my_id', savedId);
+            }
+            return savedId;
         }
 
-        // 2. Peer Başlatma Fonksiyonu
         function startPeer(id) {
-            if (peer) {
-                peer.destroy(); // Eğer eski bağlantı varsa yok et
-            }
+            if (peer) peer.destroy();
 
             peer = new Peer(id);
 
             peer.on('open', (currentId) => {
                 myIdDisplay.innerText = currentId;
                 statusDisplay.innerText = "Bağlantı bekleniyor...";
+                loadHistory(); // Tarayıcı hafızasındaki eski mesajları yükle
             });
 
             peer.on('connection', (connection) => {
@@ -109,102 +120,182 @@
 
             peer.on('error', (err) => {
                 if (err.type === 'unavailable-id') {
-                    alert("Bu ID zaten kullanımda! Başka bir ID deneyin.");
-                } else {
-                    console.error("PeerJS Hatası:", err.type);
+                    alert("Bu ID zaten kullanımda! Lütfen başka bir kalıcı ID seçin.");
                 }
             });
         }
 
-        // İlk açılışta rastgele ID ile başlat
-        startPeer(generateRandomId());
+        // İlk çalıştırma
+        startPeer(getSavedOrRandomId());
 
-        // 3. Custom ID Ayarlama Butonu
         function changeMyId() {
             const newId = customIdInput.value.trim();
-            if (!newId) return alert("Lütfen geçerli bir ID yazın.");
+            if (!newId) return alert("Geçerli bir ID girin.");
+            localStorage.setItem('zort_my_id', newId);
             startPeer(newId);
             customIdContainer.classList.add('hidden');
         }
 
-        // Custom ID panelini açıp kapatma arayüzü
         function toggleCustomIdInput() {
             customIdContainer.classList.toggle('hidden');
         }
 
-        // 4. Karşı Cihaza Bağlanma
+        // 2. Haberleşme Kurulumu
         function connectToPeer() {
             let peerId = peerIdInput.value.trim();
-            if (!peerId) return alert("Lütfen bağlanmak istediğiniz ID'yi girin.");
-            
+            if (!peerId) return alert("Lütfen arkadaşınızın ID'sini girin.");
             statusDisplay.innerText = "Bağlanıyor...";
             conn = peer.connect(peerId);
             setupConnection();
         }
 
-        // Bağlantı olay yönetimi
         function setupConnection() {
             conn.on('open', () => {
                 statusDisplay.innerText = "Çevrimiçi (Bağlandı)";
-                document.getElementById('control-zone').classList.add('hidden'); // Bağlanınca üst paneli gizle
-                appendSystemMessage("Sohbet başladı");
+                appendSystemMessage("Bağlantı kuruldu");
             });
 
             conn.on('data', (data) => {
-                appendMessage(data, 'received');
+                // Eğer karşıdan gelen veri bir "silme sinyali" ise
+                if (data.type === 'delete') {
+                    remoteDeleteMessage(data.msgId);
+                } else {
+                    saveAndAppendMessage(data.content, 'received', data.dataType, data.id);
+                }
             });
 
             conn.on('close', () => {
-                statusDisplay.innerText = "Bağlantı kesildi";
-                document.getElementById('control-zone').classList.remove('hidden');
+                statusDisplay.innerText = "Bağlantı kesildi (Çevrimdışı)";
                 conn = null;
-                appendSystemMessage("Bağlantı sonlandı");
+                appendSystemMessage("Bağlantı koptu");
             });
         }
 
-        // 5. Mesaj Gönderme
+        // 3. Mesajlaşma & Fotoğraf Gönderme Mantığı
         function sendMessage() {
             const msg = messageInput.value.trim();
             if (!msg) return;
+            if (!conn) return alert("Mesaj göndermek için önce yukarıdan bağlanmalısınız!");
 
-            if (!conn) {
-                appendSystemMessage("Önce bir cihaza bağlanmalısınız!");
-                return;
-            }
-
-            conn.send(msg);
-            appendMessage(msg, 'sent');
+            const msgId = 'msg-' + Date.now();
+            const payload = { id: msgId, type: 'chat', dataType: 'text', content: msg };
+            
+            conn.send(payload);
+            saveAndAppendMessage(msg, 'sent', 'text', msgId);
             messageInput.value = '';
         }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
+        function sendPhoto(input) {
+            if (!conn) return alert("Fotoğraf göndermek için önce bağlanmalısınız!");
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result;
+                const msgId = 'msg-' + Date.now();
+                const payload = { id: msgId, type: 'chat', dataType: 'image', content: base64Data };
+                
+                conn.send(payload);
+                saveAndAppendMessage(base64Data, 'sent', 'image', msgId);
+            };
+            reader.readAsDataURL(file);
+            input.value = ''; // Inputu temizle
         }
 
-        // Balon oluşturma mantığı
-        function appendMessage(text, type) {
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') sendMessage();
+        }
+
+        // 4. Hafıza (Storage) ve UI İşlemleri
+        function saveAndAppendMessage(content, senderType, dataType, msgId) {
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Geçmişe ekle ve kaydet
+            const msgObj = { id: msgId, content, senderType, dataType, timestamp };
+            messageHistory.push(msgObj);
+            localStorage.setItem('zort_history', JSON.stringify(messageHistory));
+
+            renderSingleMessage(msgObj);
+        }
+
+        function renderSingleMessage(msg) {
             const msgDiv = document.createElement('div');
-            msgDiv.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
+            msgDiv.id = msg.id;
+            msgDiv.className = `flex w-full group ${msg.senderType === 'sent' ? 'justify-end' : 'justify-start'}`;
 
             const innerDiv = document.createElement('div');
-            innerDiv.className = `max-w-[85%] px-3 py-1.5 rounded-lg text-[14.5px] shadow-sm relative ${
-                type === 'sent' ? 'bg-[#005c4b] text-[#e9edef] rounded-tr-none' : 'bg-[#202c33] text-[#e9edef] rounded-tl-none border border-[#222e35]'
+            innerDiv.className = `max-w-[75%] px-3 py-1.5 rounded-lg text-[14.5px] shadow-sm relative ${
+                msg.senderType === 'sent' ? 'bg-[#005c4b] text-[#e9edef] rounded-tr-none' : 'bg-[#202c33] text-[#e9edef] rounded-tl-none border border-[#222e35]'
             }`;
             
-            innerDiv.style.wordBreak = 'break-word';
-            innerDiv.innerText = text;
+            // İçerik Tipi Kontrolü (Yazı mı Fotoğraf mı?)
+            if (msg.dataType === 'image') {
+                const img = document.createElement('img');
+                img.src = msg.content;
+                img.className = "rounded-md max-w-full h-auto max-h-60 object-cover mb-1";
+                innerDiv.appendChild(img);
+            } else {
+                const textSpan = document.createElement('span');
+                textSpan.innerText = msg.content;
+                textSpan.style.wordBreak = 'break-word';
+                innerDiv.appendChild(textSpan);
+            }
 
+            // Silme Butonu (Çöp Kutusu) - Sadece kendi gönderdiklerimize veya yerel görünümde her ikisine
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '🗑️';
+            deleteBtn.className = "opacity-0 group-hover:opacity-100 absolute -top-2 -left-6 bg-slate-800 rounded p-0.5 text-xs transition-opacity cursor-pointer";
+            deleteBtn.onclick = () => requestDeleteMessage(msg.id);
+            innerDiv.appendChild(deleteBtn);
+
+            // Zaman Damgası
             const timeSpan = document.createElement('span');
-            const now = new Date();
             timeSpan.className = "text-[10px] text-[#8696a0] block text-right mt-1 ml-4 float-right select-none";
-            timeSpan.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            timeSpan.innerText = msg.timestamp;
             innerDiv.appendChild(timeSpan);
 
             msgDiv.appendChild(innerDiv);
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Mesaj Silme İşlemleri
+        function requestDeleteMessage(msgId) {
+            if (!confirm("Bu mesajı silmek istediğinize emin misiniz?")) return;
+
+            // Karşı taraf bağlıysa ona da silme emri yolla (Benden silinsin)
+            if (conn) {
+                conn.send({ type: 'delete', msgId: msgId });
+            }
+
+            localDeleteMessage(msgId);
+        }
+
+        function localDeleteMessage(msgId) {
+            // Hafızadan sil
+            messageHistory = messageHistory.filter(m => m.id !== msgId);
+            localStorage.setItem('zort_history', JSON.stringify(messageHistory));
+
+            // Ekrandan sil
+            const element = document.getElementById(msgId);
+            if (element) element.remove();
+        }
+
+        function remoteDeleteMessage(msgId) {
+            const element = document.getElementById(msgId);
+            if (element) {
+                // "Bu mesaj silindi" animasyonu veya direkt kaldırma
+                element.innerHTML = `<div class="w-full text-center text-xs text-slate-600 italic my-1">O bir mesaj sildi</div>`;
+                // Hafızadan da güncelle
+                messageHistory = messageHistory.filter(m => m.id !== msgId);
+                localStorage.setItem('zort_history', JSON.stringify(messageHistory));
+            }
+        }
+
+        function loadHistory() {
+            chatBox.innerHTML = ''; // Temizle
+            messageHistory.forEach(msg => renderSingleMessage(msg));
         }
 
         function appendSystemMessage(text) {
@@ -216,4 +307,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
