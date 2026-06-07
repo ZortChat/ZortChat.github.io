@@ -3,47 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZortChat - P2P Mobil Sohbet</title>
+    <title>ZortChat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        /* WhatsApp Sohbet Arka Plan Deseni */
+        .wa-bg {
+            background-color: #0b141a;
+            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+            background-opacity: 0.06;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans h-screen flex flex-col justify-between overflow-hidden">
+<body class="wa-bg text-[#e9edef] font-sans h-screen flex flex-col justify-between overflow-hidden">
 
-    <header class="bg-slate-800 p-4 shadow-md text-center border-b border-slate-700">
-        <h1 class="text-2xl font-black tracking-wider text-purple-400">ZORTCHAT</h1>
-        <p class="text-xs text-slate-400 mt-1">Peer-to-Peer Mobil Uyumlu Güvenli Yazışma</p>
+    <header class="bg-[#202c33] px-4 py-3 flex items-center justify-between shadow-md border-b border-[#222e35]">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center font-bold text-white text-lg shadow-sm">
+                Z
+            </div>
+            <div>
+                <h1 class="text-md font-medium text-[#e9edef] leading-tight">ZortChat</h1>
+                <p id="status" class="text-xs text-[#8696a0]">Sunucuya bağlanıyor...</p>
+            </div>
+        </div>
+        <div class="bg-[#111b21] px-3 py-1.5 rounded-full border border-[#222e35] text-center">
+            <span class="text-[11px] text-[#8696a0] block uppercase tracking-wider font-semibold">ID'niz</span>
+            <span id="my-id" class="text-sm font-bold text-[#00a884] font-mono select-all">...</span>
+        </div>
     </header>
 
-    <section class="bg-slate-800/50 p-4 border-b border-slate-700 space-y-3">
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-700">
-            <span class="text-xs text-slate-400 font-mono">Senin ID:</span>
-            <span id="my-id" class="text-sm font-bold text-green-400 font-mono select-all">Yükleniyor...</span>
-        </div>
-        
-        <div class="flex gap-2">
-            <input id="peer-id-input" type="text" placeholder="Bağlanılacak Peer ID girin" 
-                   class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-purple-500">
-            <button id="connect-btn" onclick="connectToPeer()" 
-                    class="bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-all active:scale-95">
-                Bağlan
-            </button>
-        </div>
-        <div id="status" class="text-xs text-center text-amber-400 font-medium">PeerJS sunucusuna bağlanılıyor...</div>
+    <section id="connection-zone" class="bg-[#111b21] p-3 border-b border-[#222e35] flex gap-2 shadow-inner">
+        <input id="peer-id-input" type="text" placeholder="Zort-XXXX formatında ID girin" 
+               class="flex-1 bg-[#2a3942] border-none rounded-lg px-4 py-2 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none focus:ring-1 focus:ring-[#00a884]">
+        <button id="connect-btn" onclick="connectToPeer()" 
+                class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] font-bold text-sm px-5 py-2 rounded-lg transition-all active:scale-95">
+            Bağlan
+        </button>
     </section>
 
-    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950/40">
-        <div class="text-center text-xs text-slate-500 italic my-2">Sohbeti başlatmak için ID'nizi arkadaşınıza gönderin veya onun ID'sine bağlanın.</div>
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col bg-opacity-10 bg-black">
+        <div class="self-center bg-[#182229] text-[#8696a0] text-xs px-3 py-1.5 rounded-md shadow-sm my-2 border border-[#222e35] text-center max-w-xs">
+            🔒 Mesajlar uçtan uca PeerJS ile şifresiz direkt cihazlar arası aktarılır.
+        </div>
     </main>
 
-    <footer class="p-3 bg-slate-800 border-t border-slate-700 safe-bottom">
-        <div class="flex gap-2 max-w-4xl mx-auto">
-            <input id="message-input" type="text" placeholder="Mesajınızı zortlatın..." onkeypress="handleKeyPress(event)" disabled
-                   class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
-            <button id="send-btn" onclick="sendMessage()" disabled
-                    class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-3 rounded-xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50">
-                Gönder
-            </button>
-        </div>
+    <footer class="p-3 bg-[#202c33] flex items-center gap-2 border-t border-[#222e35]">
+        <input id="message-input" type="text" placeholder="Bir mesaj yazın" onkeypress="handleKeyPress(event)" disabled
+               class="flex-1 bg-[#2a3942] border-none rounded-lg px-4 py-2.5 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none disabled:opacity-40">
+        <button id="send-btn" onclick="sendMessage()" disabled
+                class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] p-2.5 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-40">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 transform rotate-45 mr-0.5">
+                <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.53 60.53 0 0 0 18.14-11.752.75.75 0 0 0 0-1.148 60.53 60.53 0 0 0-18.14-11.752Z" />
+            </svg>
+        </button>
     </footer>
 
     <script>
@@ -58,115 +71,137 @@
         const chatBox = document.getElementById('chat-box');
         const statusDisplay = document.getElementById('status');
 
-        // 1. PeerJS Nesnesini Başlatma (Rastgele ID üretir)
-        peer = new Peer();
+        // 4 Haneli Zort-XXXX formatında ID üretme fonksiyonu
+        function generateShortId() {
+            const randomNumber = Math.floor(1000 + Math.random() * 9000); // 1000 - 9999 arası
+            return `Zort-${randomNumber}`;
+        }
 
-        // Sunucuya bağlanıp ID aldığımızda tetiklenir
+        const customId = generateShortId();
+
+        // Belirlenen özel ID ile Peer nesnesini başlatıyoruz
+        peer = new Peer(customId);
+
         peer.on('open', (id) => {
             myIdDisplay.innerText = id;
-            statusDisplay.innerText = "Bağlantıya hazır. ID'nizi paylaşabilirsiniz.";
-            statusDisplay.className = "text-xs text-center text-green-400 font-medium";
+            statusDisplay.innerText = "çevrimiçi";
+            statusDisplay.className = "text-xs text-[#00a884]";
         });
 
-        // 2. Gelen Bağlantıları Kabul Etme (Karşı taraf bize bağlanırsa)
+        // Hata yönetimi (Özellikle ID çakışması durumu için)
+        peer.on('error', (err) => {
+            if (err.type === 'unavailable-id') {
+                alert("Üretilen ID kullanımda, sayfa yenileniyor...");
+                window.location.reload();
+            } else {
+                console.error(err);
+            }
+        });
+
+        // Gelen bağlantı istekleri
         peer.on('connection', (connection) => {
             if (conn) {
-                connection.close(); // ZortChat şu anlık tekil (1-1) bağlantı destekliyor
+                connection.close(); 
                 return;
             }
             conn = connection;
             setupConnection();
         });
 
-        // 3. Karşı Tarafa Bağlanma Buton Aksiyonu
+        // Bağlan buton aksiyonu
         function connectToPeer() {
-            const peerId = peerIdInput.value.trim();
-            if (!peerId) return alert('Lütfen geçerli bir Peer ID girin.');
+            let peerId = peerIdInput.value.trim();
+            if (!peerId) return;
             
-            statusDisplay.innerText = "Bağlantı kuruluyor...";
-            statusDisplay.className = "text-xs text-center text-amber-400 font-medium";
+            statusDisplay.innerText = "bağlanıyor...";
+            statusDisplay.className = "text-xs text-[#8696a0]";
 
             conn = peer.connect(peerId);
             setupConnection();
         }
 
-        // 4. Bağlantı Ayarları ve Olay Yönetimi
+        // Ortak bağlantı olayları
         function setupConnection() {
             conn.on('open', () => {
-                statusDisplay.innerText = `Bağlı: ${conn.peer}`;
-                statusDisplay.className = "text-xs text-center text-blue-400 font-bold";
+                statusDisplay.innerText = "yazıyor...";
+                statusDisplay.className = "text-xs text-[#00a884]";
                 
-                // Inputları aktif et
                 messageInput.disabled = false;
                 sendBtn.disabled = false;
-                peerIdInput.disabled = true;
-                connectBtn.disabled = true;
+                document.getElementById('connection-zone').classList.add('hidden'); // Bağlanınca üst barı gizle
                 
-                appendSystemMessage("Bağlantı başarıyla kuruldu! Yazışmaya başlayabilirsiniz.");
+                appendSystemMessage("Sohbet başladı");
             });
 
-            // Gelen mesajları yakalama
             conn.on('data', (data) => {
                 appendMessage(data, 'received');
             });
 
-            // Bağlantı koptuğunda
             conn.on('close', () => {
-                statusDisplay.innerText = "Bağlantı koptu.";
-                statusDisplay.className = "text-xs text-center text-red-400 font-medium";
+                statusDisplay.innerText = "çevrimdışı";
+                statusDisplay.className = "text-xs text-red-400";
                 messageInput.disabled = true;
                 sendBtn.disabled = true;
-                peerIdInput.disabled = false;
-                connectBtn.disabled = false;
+                document.getElementById('connection-zone').classList.remove('hidden');
                 conn = null;
-                appendSystemMessage("Karşı taraf sohbetten ayrıldı.");
+                appendSystemMessage("Bağlantı kesildi");
             });
         }
 
-        // 5. Mesaj Gönderme Fonksiyonu
+        // Mesaj gönderme
         function sendMessage() {
             const msg = messageInput.value.trim();
             if (!msg || !conn) return;
 
-            conn.send(msg); // Veriyi P2P olarak gönderir
+            conn.send(msg);
             appendMessage(msg, 'sent');
             messageInput.value = '';
         }
 
-        // Enter tuşu ile gönderme sağlama
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
-        // 6. Arayüze Mesaj Ekleme (UI Helpers)
+        // WhatsApp Balon Tasarımlı UI Mesaj Ekleme
         function appendMessage(text, type) {
             const msgDiv = document.createElement('div');
-            msgDiv.className = `flex ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
+            // Sağa ya da sola yaslama
+            msgDiv.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
 
             const innerDiv = document.createElement('div');
-            innerDiv.className = `max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${
+            // WhatsApp yeşili (#005c4b) ve koyu gri (#202c33) renk tonları
+            innerDiv.className = `max-w-[85%] px-3 py-1.5 rounded-lg text-[14.5px] shadow-sm relative ${
                 type === 'sent' 
-                    ? 'bg-purple-600 text-white rounded-tr-none shadow-md' 
-                    : 'bg-slate-800 text-slate-100 rounded-tl-none border border-slate-700'
+                    ? 'bg-[#005c4b] text-[#e9edef] rounded-tr-none' 
+                    : 'bg-[#202c33] text-[#e9edef] rounded-tl-none border border-[#222e35]'
             }`;
+            
+            // Satır içi metin koruması
+            innerDiv.style.wordBreak = 'break-word';
             innerDiv.innerText = text;
+
+            // Zaman damgası ekleme (Küçük detay)
+            const timeSpan = document.createElement('span');
+            const now = new Date();
+            timeSpan.className = "text-[10px] text-[#8696a0] block text-right mt-1 ml-4 float-right select-none";
+            timeSpan.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            innerDiv.appendChild(timeSpan);
 
             msgDiv.appendChild(innerDiv);
             chatBox.appendChild(msgDiv);
             
-            // Otomatik olarak aşağı kaydır
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function appendSystemMessage(text) {
             const sysDiv = document.createElement('div');
-            sysDiv.className = "text-center text-xs text-slate-500 italic my-1";
+            sysDiv.className = "self-center bg-[#182229] text-[#8696a0] text-[11px] px-2 py-1 rounded shadow-sm my-1 uppercase tracking-wide";
             sysDiv.innerText = text;
             chatBox.appendChild(sysDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body>
-  </html>
+</html>
