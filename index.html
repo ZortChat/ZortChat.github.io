@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZortChat</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PeerJS -->
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
         .wa-bg {
             background-color: #0b141a;
             background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
@@ -16,175 +15,92 @@
         }
     </style>
 </head>
-<body class="wa-bg text-[#e9edef] font-sans h-screen flex flex-col justify-between overflow-hidden inset-0 fixed">
+<body class="wa-bg text-[#e9edef] font-sans flex flex-col justify-between">
 
-    <!-- Üst Bar -->
-    <header class="bg-[#202c33] px-4 py-3 flex items-center justify-between shadow-md border-b border-[#222e35] shrink-0">
+    <header class="bg-[#202c33] px-4 py-3 flex items-center justify-between shadow-md border-b border-[#222e35] h-[65px] shrink-0">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center font-bold text-white text-lg shadow-sm">
-                Z
-            </div>
+            <div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center font-bold text-white text-lg shadow-sm">Z</div>
             <div>
                 <h1 class="text-md font-medium text-[#e9edef] leading-tight">ZortChat</h1>
-                <p id="status" class="text-xs text-[#00a884]">çevrimiçi</p>
+                <p id="status" class="text-xs text-[#8696a0]">ID Ayarlayın...</p>
             </div>
         </div>
-        <!-- Kısa ID Göstergesi -->
-        <div class="bg-[#111b21] px-3 py-1.5 rounded-full border border-[#222e35] text-center">
-            <span class="text-[11px] text-[#8696a0] block uppercase tracking-wider font-semibold">ID'niz</span>
-            <span id="my-id" class="text-sm font-bold text-[#00a884] font-mono select-all">...</span>
+        <div class="bg-[#111b21] px-3 py-1 rounded-full border border-[#222e35] text-center">
+            <span class="text-[10px] text-[#8696a0] block uppercase tracking-wider font-semibold">Aktif ID</span>
+            <span id="my-id" class="text-xs font-bold text-[#ea580c] font-mono select-all">YOK</span>
         </div>
     </header>
 
-    <!-- Bağlantı Kurma Alanı -->
-    <section id="connection-zone" class="bg-[#111b21] p-3 border-b border-[#222e35] flex gap-2 shadow-inner shrink-0">
-        <input id="peer-id-input" type="text" placeholder="Zort-XXXX formatında ID girin" 
-               class="flex-1 bg-[#2a3942] border-none rounded-lg px-4 py-2 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none focus:ring-1 focus:ring-[#00a884]">
-        <button id="connect-btn" onclick="connectToPeer()" 
-                class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] font-bold text-sm px-5 py-2 rounded-lg transition-all active:scale-95">
-            Bağlan
-        </button>
+    <section id="setup-zone" class="bg-[#111b21] p-3 border-b border-[#222e35] space-y-2 shrink-0">
+        <div class="flex gap-2" id="my-id-container">
+            <input id="my-id-input" type="text" placeholder="Kendi ortak ID'nizi yazın (Örn: zort-tayfa)" 
+                   class="flex-1 bg-[#2a3942] border-none rounded-lg px-3 py-2 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none focus:ring-1 focus:ring-[#00a884]">
+            <button onclick="initializePeer()" class="bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold text-xs px-4 py-2 rounded-lg transition-all">
+                ID Sabitle
+            </button>
+        </div>
+        
+        <div class="flex gap-2 hidden" id="connect-container">
+            <input id="peer-id-input" type="text" placeholder="Arkadaşının anlaştığınız ID'sini girin" 
+                   class="flex-1 bg-[#2a3942] border-none rounded-lg px-3 py-2 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none focus:ring-1 focus:ring-[#00a884]">
+            <button onclick="connectToPeer()" class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] font-bold text-xs px-4 py-2 rounded-lg transition-all">
+                Bağlan
+            </button>
+        </div>
     </section>
 
-    <!-- Mesajlaşma Alanı -->
-    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col bg-opacity-10 bg-black hierarchy-scroll">
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col bg-opacity-20 bg-black">
         <div class="self-center bg-[#182229] text-[#8696a0] text-xs px-3 py-1.5 rounded-md shadow-sm my-2 border border-[#222e35] text-center max-w-xs">
-            🔒 Karşı tarafın ID'sini yukarıya yazıp bağlanın veya kendi ID'nizi karşıya verin.
+            💡 Önce bir ID sabitleyin, ardından arkadaşınızın sabitlediği ortak ID'yi yazarak bağlanın.
         </div>
     </main>
 
-    <!-- Mesaj Gönderme Alanı (Artık kilitli değil, her zaman görünür) -->
-    <footer class="p-3 bg-[#202c33] flex items-center gap-2 border-t border-[#222e35] shrink-0 dynamic-bottom">
+    <footer class="bg-[#202c33] p-3 border-t border-[#222e35] h-[65px] shrink-0 flex items-center gap-2">
         <input id="message-input" type="text" placeholder="Bir mesaj yazın..." onkeypress="handleKeyPress(event)"
-               class="flex-1 bg-[#2a3942] border-none rounded-lg px-4 py-2.5 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none">
-        <button id="send-btn" onclick="sendMessage()" 
-                class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] p-2.5 rounded-full flex items-center justify-center transition-all active:scale-95">
+               class="flex-1 bg-[#2a3942] border-none rounded-lg px-4 py-2.5 text-sm text-[#e9edef] placeholder-[#8696a0] focus:outline-none z-50">
+        <button onclick="sendMessage()" 
+                class="bg-[#00a884] hover:bg-[#008f72] text-[#111b21] p-2.5 rounded-full flex items-center justify-center shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 transform rotate-45 mr-0.5">
                 <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.53 60.53 0 0 0 18.14-11.752.75.75 0 0 0 0-1.148 60.53 60.53 0 0 0-18.14-11.752Z" />
             </svg>
         </button>
     </footer>
 
-    <!-- JS Logic -->
     <script>
         let peer = null;
         let conn = null;
 
         const myIdDisplay = document.getElementById('my-id');
+        const myIdInput = document.getElementById('my-id-input');
         const peerIdInput = document.getElementById('peer-id-input');
-        const connectBtn = document.getElementById('connect-btn');
         const messageInput = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-btn');
         const chatBox = document.getElementById('chat-box');
         const statusDisplay = document.getElementById('status');
 
-        function generateShortId() {
-            return `Zort-${Math.floor(1000 + Math.random() * 9000)}`;
-        }
+        // Kendi istediğin özel ID ile PeerJS'i başlatma
+        function initializePeer() {
+            const desiredId = myIdInput.value.trim();
+            if (!desiredId) return alert("Lütfen kendiniz için bir ortak ID kelimesi yazın!");
 
-        const customId = generateShortId();
-        peer = new Peer(customId);
+            peer = new Peer(desiredId);
 
-        peer.on('open', (id) => {
-            myIdDisplay.innerText = id;
-            statusDisplay.innerText = "bağlantı bekleniyor";
-        });
-
-        peer.on('error', (err) => {
-            if (err.type === 'unavailable-id') {
-                window.location.reload();
-            } else {
-                appendSystemMessage("Hata: " + err.type);
-            }
-        });
-
-        // Gelen bağlantı
-        peer.on('connection', (connection) => {
-            if (conn) { connection.close(); return; }
-            conn = connection;
-            setupConnection();
-        });
-
-        // Butonla bağlantı kurma
-        function connectToPeer() {
-            let peerId = peerIdInput.value.trim();
-            if (!peerId) return alert("Lütfen bir ID girin.");
-            
-            statusDisplay.innerText = "bağlanıyor...";
-            conn = peer.connect(peerId);
-            setupConnection();
-        }
-
-        function setupConnection() {
-            conn.on('open', () => {
-                statusDisplay.innerText = "bağlandı";
-                document.getElementById('connection-zone').classList.add('hidden');
-                appendSystemMessage("Sohbet başladı");
+            peer.on('open', (id) => {
+                myIdDisplay.innerText = id;
+                myIdDisplay.className = "text-xs font-bold text-[#00a884] font-mono select-all";
+                statusDisplay.innerText = "bağlantı bekleniyor";
+                
+                // UI Güncelleme: Kendi ID alanını gizle, Karşıya Bağlanma alanını aç
+                document.getElementById('my-id-container').classList.add('hidden');
+                document.getElementById('connect-container').classList.remove('hidden');
+                appendSystemMessage(`ID'niz '${id}' olarak sabitlendi.`);
             });
 
-            conn.on('data', (data) => {
-                appendMessage(data, 'received');
-            });
-
-            conn.on('close', () => {
-                statusDisplay.innerText = "bağlantı kesildi";
-                document.getElementById('connection-zone').classList.remove('hidden');
-                conn = null;
-                appendSystemMessage("Bağlantı sonlandı");
-            });
-        }
-
-        // Mesaj gönderme mekanizması (Bağlantı yoksa yerel uyarı verir)
-        function sendMessage() {
-            const msg = messageInput.value.trim();
-            if (!msg) return;
-
-            if (!conn) {
-                appendSystemMessage("Önce bir cihaza bağlanmalısınız!");
-                return;
-            }
-
-            conn.send(msg);
-            appendMessage(msg, 'sent');
-            messageInput.value = '';
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        function appendMessage(text, type) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
-
-            const innerDiv = document.createElement('div');
-            innerDiv.className = `max-w-[85%] px-3 py-1.5 rounded-lg text-[14.5px] shadow-sm relative ${
-                type === 'sent' ? 'bg-[#005c4b] text-[#e9edef] rounded-tr-none' : 'bg-[#202c33] text-[#e9edef] rounded-tl-none border border-[#222e35]'
-            }`;
-            
-            innerDiv.style.wordBreak = 'break-word';
-            innerDiv.innerText = text;
-
-            const timeSpan = document.createElement('span');
-            const now = new Date();
-            timeSpan.className = "text-[10px] text-[#8696a0] block text-right mt-1 ml-4 float-right select-none";
-            timeSpan.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            innerDiv.appendChild(timeSpan);
-
-            msgDiv.appendChild(innerDiv);
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function appendSystemMessage(text) {
-            const sysDiv = document.createElement('div');
-            sysDiv.className = "self-center bg-[#182229] text-[#ea580c] text-[11px] px-2 py-1 rounded shadow-sm my-1 uppercase tracking-wide font-semibold";
-            sysDiv.innerText = text;
-            chatBox.appendChild(sysDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    </script>
+            peer.on('error', (err) => {
+                if (err.type === 'unavailable-id') {
+                    alert("Bu ID şu an başkası tarafından kullanılıyor! Başka bir kelime deneyin.");
+                } else {
+                    alert("Hata oluştu: " + err.type);
+                }
+            </script>
 </body>
 </html>
